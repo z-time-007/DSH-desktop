@@ -5,9 +5,11 @@
 .DESCRIPTION
   自动完成：
     1. 检查环境（Node.js / pnpm / git）
-    2. 定位或安装 DeepSeek Harness
-    3. 安装本仓库的 6 个增强插件（打包 → 安全扫描 → 安装）
-    4. 构建原生桌面应用
+    2. 定位 DeepSeek Harness（完整版 harness 或官方 npm 版）
+    3. 安装本仓库的 6 个增强插件
+       - 完整版 harness：打包 → 安全扫描 → 门禁安装
+       - 官方 npm 版：打包 → dsh plugin add（自动装 sharp 等依赖）
+    4. 构建原生桌面应用（可选）
     5. 重启后端并验证
 
   使用方式（在 PowerShell 中）：
@@ -17,6 +19,7 @@
 
   常用参数：
     -HarnessRoot "D:\path\to\deepseek-harness"  手动指定 DSH 根目录
+    -Port 3090                                   换端口（默认 3080）
     -SkipDesktopApp                              跳过桌面应用构建
     -SkipRestart                                 安装后不自动重启后端
 #>
@@ -50,7 +53,6 @@ Step "检查环境"
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
     Warn "未检测到 Node.js，尝试用 winget 自动安装 LTS 版本……"
     winget install OpenJS.NodeJS.LTS --accept-package-agreements --accept-source-agreements 2>&1 | Out-Null
-    # 刷新 PATH
     $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
 }
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
@@ -70,13 +72,7 @@ if (-not (Get-Command pnpm -ErrorAction SilentlyContinue)) {
 }
 Ok "pnpm $(pnpm -v)"
 
-if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-    Err "未检测到 git。请安装 https://git-scm.com 后重新运行本脚本。"
-    exit 1
-}
-Ok "git $(git --version | Out-String).Trim()"
-
-# ---------- 2. 定位 / 安装 DeepSeek Harness ----------
+# ---------- 2. 定位 DeepSeek Harness + 判断安装模式 ----------
 Step "定位 DeepSeek Harness"
 
 function Find-HarnessRoot {
@@ -102,61 +98,33 @@ function Find-HarnessRoot {
 
 $harness = Find-HarnessRoot -Candidate $HarnessRoot
 if (-not $harness) {
-    Warn "未找到已安装的 DeepSeek Harness。"
-    if (-not $DshInstallDir) { $DshInstallDir = Join-Path $env:USERPROFILE 'deepseek-harness' }
-    Write-Host "正在从官方仓库安装到：$DshInstallDir（首次构建可能需要几分钟）"
-    New-Item -ItemType Directory -Force -Path $DshInstallDir | Out-Null
-    git clone https://github.com/deepseek-ai/DeepSeek-Harness.git $DshInstallDir
-    Push-Location $DshInstallDir
-    try {
-        pnpm install
-        if ($LASTEXITCODE -ne 0) { throw 'pnpm install 失败' }
-        pnpm run build
-        if ($LASTEXITCODE -ne 0) { throw 'pnpm run build 失败' }
-    } finally { Pop-Location }
-    $harness = $DshInstallDir
+    Warn "未找到完整版 DeepSeek Harness（可能是官方 npm 版，稍后会用 dsh plugin add 安装）。"
+    $harness = $RepoRoot
 }
-Ok "DeepSeek Harness 目录：$harness"
 
-# 插件安装依赖完整版 harness 的安全门禁
+# 判断安装模式
 $inspector = Join-Path $harness 'security\Inspect-PluginPackage.ps1'
 $installer = Join-Path $harness 'security\Install-PluginSafely.ps1'
-if (-not (Test-Path $inspector) -or -not (Test-Path $installer)) {
-    Err "当前 DSH 缺少插件安全门禁（security\Inspect-PluginPackage.ps1）。"
-    Err "请使用包含完整插件门禁的 DeepSeek Harness 安装（或用 -HarnessRoot 指定），再运行本脚本安装插件。"
-    exit 1
-}
+$hasGate = (Test-Path $inspector) -and (Test-Path $installer)
+$mode = if ($hasGate) { 'harness' } else { 'npm' }
+if ($mode -eq 'harness') { Ok "检测到完整版 harness，走安全门禁安装" }
+else { Warn "未检测到安全门禁，按官方 npm 版处理（dsh plugin add 安装）" }
+
 $pnpmCmd = if (Test-Path (Join-Path $harness 'runtime\pnpm.cmd')) { Join-Path $harness 'runtime\pnpm.cmd' } else { 'pnpm' }
 
-# 启动后端（如未运行）
-Step "启动 DeepSeek Harness 后端"
-$health = $false
-try { $r = Invoke-WebRequest -Uri "http://127.0.0.1:$Port/" -UseBasicParsing -TimeoutSec 3; if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 500) { $health = $true } } catch {}
-if (-not $health) {
-    $starter = Join-Path $harness 'scripts\Start-DeepSeek-HarnessBackground.ps1'
-    if (Test-Path $starter) {
-        Start-Process powershell.exe -WindowStyle Hidden -ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-File', $starter, '-Port', "$Port") | Out-Null
-        Write-Host "后端正在启动，等待就绪……"
-        for ($i = 0; $i -lt 60; $i++) {
-            Start-Sleep -Seconds 2
-            try { $r = Invoke-WebRequest -Uri "http://127.0.0.1:$Port/" -UseBasicParsing -TimeoutSec 3; if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 500) { $health = $true; break } } catch {}
-        }
-    } else {
-        Write-Host "未找到后台启动脚本，请手动启动 DSH 后重试。"
-    }
+# 官方 npm 版需要 dsh 命令
+$dshCmd = $null
+if (Get-Command dsh -ErrorAction SilentlyContinue) { $dshCmd = 'dsh' }
+elseif (Get-Command npx -ErrorAction SilentlyContinue) { $dshCmd = 'npx' }
+if ($mode -eq 'npm' -and -not $dshCmd) {
+    Err "未找到 dsh 命令。请先安装：npm install -g @deepseek-ai/dsh，然后重新运行本脚本。"
+    exit 1
 }
-if ($health) { Ok "后端已就绪 http://127.0.0.1:$Port" } else { Warn '后端尚未就绪（可稍后手动启动）' }
 
 # ---------- 3. 安装 6 个增强插件 ----------
 Step "安装增强插件"
-$distRoot = Join-Path $harness 'plugins\dist'
+$distRoot = if ($mode -eq 'harness') { Join-Path $harness 'plugins\dist' } else { Join-Path $RepoRoot '.build-dist' }
 New-Item -ItemType Directory -Force -Path $distRoot | Out-Null
-
-# 壁纸功能可选依赖 sharp：缺失不影响安装，仅提示（避免小白误以为装坏了）
-if (-not (Test-Path (Join-Path $harness 'node_modules\sharp'))) {
-    Warn "未检测到 sharp（壁纸图像库）：壁纸功能不可用，但桌宠 / dock / 透明度等其它功能正常。"
-    Write-Host "  如需壁纸功能，可在 DSH 根目录执行：pnpm add sharp"
-}
 
 $pluginDirs = @(Get-ChildItem (Join-Path $RepoRoot 'plugins') -Directory | Sort-Object Name)
 if ($pluginDirs.Count -eq 0) {
@@ -188,19 +156,23 @@ foreach ($pluginDir in $pluginDirs) {
         Remove-Item $staging -Recurse -Force
         Write-Host "打包完成：$finalName"
 
-        # 2) 安全扫描
-        Write-Host "安全扫描（Defender + 静态分析 + 依赖审计）……"
-        & $inspector -Package $finalPath | Out-Null
-        if ($LASTEXITCODE -gt 2) { throw "扫描判定为 blocked（$name），已停止安装该插件" }
-        $report = @(Get-ChildItem (Join-Path $harness 'security\reports') -Filter 'plugin-review-*.json' -File |
-            Sort-Object LastWriteTime -Descending | Select-Object -First 1)
-        if ($report.Count -ne 1) { throw "未生成扫描报告（$name）" }
-        Write-Host "扫描报告：$($report[0].Name)"
-
-        # 3) 安装（-Approve：本仓库插件为仓库作者自研，安装前已复核扫描报告）
-        Write-Host "安装中……"
-        & $installer -Package $finalPath -ApprovedReport $report[0].FullName -Approve | Out-Null
-        if ($LASTEXITCODE -ne 0) { throw "安装失败（$name）" }
+        # 2) 安装
+        if ($mode -eq 'harness') {
+            Write-Host "安全扫描（Defender + 静态分析 + 依赖审计）……"
+            & $inspector -Package $finalPath | Out-Null
+            if ($LASTEXITCODE -gt 2) { throw "扫描判定为 blocked（$name），已停止安装该插件" }
+            $report = @(Get-ChildItem (Join-Path $harness 'security\reports') -Filter 'plugin-review-*.json' -File |
+                Sort-Object LastWriteTime -Descending | Select-Object -First 1)
+            if ($report.Count -ne 1) { throw "未生成扫描报告（$name）" }
+            Write-Host "安装中……"
+            & $installer -Package $finalPath -ApprovedReport $report[0].FullName -Approve | Out-Null
+            if ($LASTEXITCODE -ne 0) { throw "安装失败（$name）" }
+        } else {
+            Write-Host "安装中（dsh plugin add，自动安装依赖）……"
+            if ($dshCmd -eq 'dsh') { & dsh plugin add $finalPath }
+            else { & npx @deepseek-ai/dsh plugin add $finalPath }
+            if ($LASTEXITCODE -ne 0) { throw "安装失败（$name）" }
+        }
         Ok "已安装 $name"
     } catch {
         Err $_.Exception.Message
@@ -225,7 +197,7 @@ if (-not $SkipDesktopApp) {
 if (-not $SkipRestart) {
     Step "重启后端（加载新插件）"
     $restartScript = Join-Path $RepoRoot 'tools\Restart-DshService.ps1'
-    if (Test-Path $restartScript) {
+    if ($mode -eq 'harness' -and (Test-Path $restartScript)) {
         Start-Process powershell.exe -WindowStyle Hidden -ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-File', $restartScript) | Out-Null
         Write-Host "后端正在重启，等待就绪……"
         Start-Sleep -Seconds 12
@@ -234,7 +206,7 @@ if (-not $SkipRestart) {
             Start-Sleep -Seconds 2
         }
     } else {
-        Write-Host "未找到重启脚本，请手动重启 DSH 使插件生效。"
+        Write-Host "官方 npm 版请手动重启 DSH（或重新运行 dsh web）使插件生效。"
     }
 }
 
@@ -243,10 +215,9 @@ Step "验证"
 try {
     $d = (Invoke-WebRequest -Uri "http://127.0.0.1:$Port/dsh-token-pet/data.json" -UseBasicParsing -TimeoutSec 8).Content | ConvertFrom-Json
     if ($d.session) { Ok "token-pet 数据接口正常（session=$($d.session.sessionId)）" } else { Warn 'token-pet 接口未就绪' }
-} catch { Warn "token-pet 接口未就绪：$($_.Exception.Message)" }
+} catch { Warn "token-pet 接口未就绪（后端可能尚未启动）：$($_.Exception.Message)" }
 
 Write-Host "`n========== 安装完成 ==========" -ForegroundColor Green
 Write-Host "1. 打开 DSH：http://127.0.0.1:$Port"
-Write-Host "2. 桌面应用：$harness 桌面快捷方式或 desktop\dist\DeepSeekHarness\DeepSeekHarness.exe"
-Write-Host "3. 在设置里可看到「桌面体验 / 桌宠 / 壁纸」标签，即插件已生效"
-Write-Host "4. 如遇任何问题，请带上本脚本输出到仓库 Issues 反馈"
+Write-Host "2. 在设置里可看到「桌面体验 / 桌宠 / 壁纸」标签，即插件已生效"
+Write-Host "3. 如遇任何问题，请带上本脚本输出到仓库 Issues 反馈"
