@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   DSH 桌面增强套件 · 一键安装脚本（Windows）
 
