@@ -180,6 +180,37 @@ foreach ($pluginDir in $pluginDirs) {
     }
 }
 
+
+# ---------- 3.5 npm 版：配置个人助手工作区 ----------
+if ($mode -eq 'npm') {
+    Step "配置个人助手工作区（personal-assistant 固定工作目录）"
+    $dshHome = if ($env:DSH_HOME) { $env:DSH_HOME } else { Join-Path $env:USERPROFILE '.dsh' }
+    $workspace = Join-Path $dshHome 'workspace'
+    New-Item -ItemType Directory -Force -Path $workspace | Out-Null
+    $profileDir = Join-Path $dshHome 'profiles\web'
+    if (-not (Test-Path $profileDir)) {
+        Warn "未找到 web profile（$profileDir），请先安装插件后再配置工作区。"
+    } else {
+        $patchFile = Join-Path $profileDir 'cordis.patch.yml'
+        $entry = @"
+
+# DSH 桌面增强套件：个人助手固定工作区（由 install.ps1 生成）
+- id: local-personal-assistant
+  config:
+    workspaceRoot: '$workspace'
+"@
+        $content = if (Test-Path $patchFile) { Get-Content $patchFile -Raw -Encoding UTF8 } else { '[]' }
+        if ($content -match 'local-personal-assistant') {
+            Ok "工作区配置已存在：$workspace"
+        } elseif ($content.Contains('[]')) {
+            Set-Content -Path $patchFile -Value $entry -Encoding UTF8
+            Ok "已写入个人助手工作区：$workspace"
+        } else {
+            Add-Content -Path $patchFile -Value $entry -Encoding UTF8
+            Ok "已追加个人助手工作区：$workspace"
+        }
+    }
+}
 # ---------- 4. 构建桌面应用 ----------
 if (-not $SkipDesktopApp) {
     Step "构建桌面应用"

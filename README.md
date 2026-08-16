@@ -32,7 +32,7 @@
 
 ## 功能介绍
 
-### 1. 桌面体验（desktop-experience，v0.1.23）
+### 1. 桌面体验（desktop-experience，v0.1.26）
 
 - **本地壁纸**：支持 PNG / JPEG / WebP / GIF。图片经过安全扫描与转码（动态图转成 animated WebP，静态图同时生成封面），拒绝 SVG、网页、远程 URL 和视频。
 - **壁纸美化**：可调「模糊」「玻璃质感」「壁纸透明度」。
@@ -51,12 +51,14 @@
 
 - 安全读取 Word / PowerPoint / Excel：路径越界防护、文件类型与内容格式校验、只读解析。
 
-### 4. 个人助理（personal-assistant，v0.1.1）
+### 4. 个人助理（personal-assistant，v0.1.2）
 
 - **本地秘书**：任务清单、便签、每日摘要、会议纪要（只写入本地工作区）。
 - **文档生成**：`assistant_document_create_text/docx/pptx/xlsx` 一键生成文档。
 - 图片收件箱、本机状态读取等辅助能力。
 
+
+> **固定工作区**：助理的所有文件操作被限制在一个固定工作目录内。完整版 harness 由启动脚本通过 DSH_ASSISTANT_WORKSPACE 环境变量提供；官方 npm 版由 install.ps1 自动写入 ~\.dsh\profiles\web\cordis.patch.yml（默认工作区 ~\.dsh\workspace）。
 ### 5. 安全自动批准（safe-auto-approval，v0.1.1）
 
 - 对只读类工具调用自动放行，涉及写操作的工具调用仍要求用户确认，减少打断。

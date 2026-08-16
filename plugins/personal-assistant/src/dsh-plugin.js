@@ -65,9 +65,10 @@ function booleanOrDefault(value, fallback) {
 }
 
 export async function apply(ctx, rawConfig = {}) {
+  const envEnabled = process.env.DSH_ASSISTANT_ENABLED
   const config = {
-    enabled: booleanOrDefault(rawConfig.enabled, true),
-    workspaceRoot: rawConfig.workspaceRoot,
+    enabled: envEnabled === undefined ? booleanOrDefault(rawConfig.enabled, true) : envEnabled !== '0',
+    workspaceRoot: rawConfig.workspaceRoot ?? process.env.DSH_ASSISTANT_WORKSPACE,
     auditPath: rawConfig.auditPath ?? '.assistant/audit/events.jsonl',
     computerStatus: booleanOrDefault(rawConfig.computerStatus, true),
     fileSteward: booleanOrDefault(rawConfig.fileSteward, true),

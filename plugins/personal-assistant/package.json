@@ -1,6 +1,6 @@
 {
   "name": "@local/dsh-personal-assistant",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Least-privilege local personal assistant bundle for DeepSeek Harness",
   "type": "module",
