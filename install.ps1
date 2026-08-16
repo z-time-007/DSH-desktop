@@ -169,8 +169,8 @@ foreach ($pluginDir in $pluginDirs) {
             if ($LASTEXITCODE -ne 0) { throw "安装失败（$name）" }
         } else {
             Write-Host "安装中（dsh plugin add，自动安装依赖）……"
-            if ($dshCmd -eq 'dsh') { & dsh plugin add $finalPath }
-            else { & npx @deepseek-ai/dsh plugin add $finalPath }
+            if ($dshCmd -eq 'dsh') { & dsh plugin add $finalPath --profile web }
+            else { & npx @deepseek-ai/dsh plugin add $finalPath --profile web }
             if ($LASTEXITCODE -ne 0) { throw "安装失败（$name）" }
         }
         Ok "已安装 $name"
@@ -185,7 +185,7 @@ if (-not $SkipDesktopApp) {
     Step "构建桌面应用"
     $buildApp = Join-Path $RepoRoot 'desktop\build\Build-DshDesktopApp.ps1'
     if (Test-Path $buildApp) {
-        & $buildApp -HarnessRoot $harness
+        & $buildApp
         if ($LASTEXITCODE -ne 0) { Warn '桌面应用构建未完全成功（不影响插件使用）' }
         else { Ok '桌面应用已构建' }
     } else {
