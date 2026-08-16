@@ -76,17 +76,30 @@
 
 ## 安装说明
 
-### 一键安装（推荐小白使用）
+### 一键安装（推荐，全程无需 npm 账号）
 
-在 PowerShell 中，进入本仓库根目录后运行：
+**准备（一次性）**：Windows 10/11、Node.js LTS、pnpm、git，以及 DeepSeek Harness（二选一）：
+- 完整版 harness（自带插件安全门禁），或
+- 官方 npm 版：`npm install -g @deepseek-ai/dsh`
+
+**安装步骤**：
 
 ```powershell
+# 1. 下载本仓库
+git clone https://github.com/z-time-007/DSH-desktop.git
+cd DSH-desktop
+
+# 2. 一键安装
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
-脚本会自动完成：检查环境（Node.js / pnpm / git）→ 定位或安装 DeepSeek Harness → 安装 6 个增强插件 → 构建桌面应用 → 重启后端并验证。
+脚本自动完成：检查环境 → 定位 DSH → 打包 6 个插件并安装（自动下载 sharp 等依赖）→ 构建桌面应用 → 重启后端 → 验证。
 
-常用参数：
+**两种 DSH 都自动适配**：
+- 检测到**完整版 harness**（有 `security\` 门禁）→ 走「打包 → 安全扫描 → 门禁安装」。
+- 检测到**官方 npm 版**（无门禁）→ 走 `dsh plugin add`（自动安装依赖）。
+
+**常用参数**：
 
 ```powershell
 .\install.ps1 -HarnessRoot "D:\path\to\deepseek-harness"   # 手动指定 DSH 根目录
@@ -95,14 +108,9 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 .\install.ps1 -SkipRestart                                  # 安装后不自动重启后端
 ```
 
-### 环境要求
+> 说明：`dsh plugin add` 安装依赖时会从 npm 仓库**匿名下载**（无需账号）；只有「发布到 npm」才需要 npm 账号。
 
-- Windows 10 / 11
-- 已安装 DeepSeek Harness（本仓库假设其根目录为 `D:\path\to\deepseek-harness`）
-- Node.js ≥ 24（DSH 自带 runtime 亦可）
-- pnpm
-
-### 安装插件（所有插件同一条安全门禁）
+### 手动安装（完整版 harness，走安全门禁）
 
 以 `desktop-experience` 为例：
 
@@ -120,7 +128,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File D:\path\to\deepseek-harness\
 powershell -NoProfile -ExecutionPolicy Bypass -File D:\path\to\dsh-plugins\tools\Restart-DshService.ps1
 ```
 
-各插件目录下的 `build\` 内也提供了对应的打包脚本（如 `Build-DshTokenPetPlugin.ps1`、`Build-DshOfficeDocsPlugin.ps1`），直接运行即可完成「打包 + 扫描」两步。
+各插件目录下的 `build\` 内也提供了打包脚本（如 `Build-DshTokenPetPlugin.ps1`、`Build-DshOfficeDocsPlugin.ps1`），直接运行即可完成「打包 + 扫描」两步。
 
 ### 构建桌面应用（desktop/）
 
@@ -129,6 +137,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File D:\path\to\dsh-plugins\deskt
 ```
 
 构建产物为 `desktop\dist\DeepSeekHarness\DeepSeekHarness.exe`，并会在桌面创建快捷方式。
+
+### 验证是否装好
+
+1. 打开 `http://127.0.0.1:3080`。
+2. 打开设置，能看到「桌面体验 / 桌宠 / 壁纸」三个标签 → 即安装成功。
 
 ---
 
