@@ -74,6 +74,24 @@
 
 ## 安装说明
 
+### 一键安装（推荐小白使用）
+
+在 PowerShell 中，进入本仓库根目录后运行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File install.ps1
+```
+
+脚本会自动完成：检查环境（Node.js / pnpm / git）→ 定位或安装 DeepSeek Harness → 安装 6 个增强插件 → 构建桌面应用 → 重启后端并验证。
+
+常用参数：
+
+```powershell
+.\install.ps1 -HarnessRoot "D:\path\to\deepseek-harness"   # 手动指定 DSH 根目录
+.\install.ps1 -SkipDesktopApp                               # 跳过桌面应用构建
+.\install.ps1 -SkipRestart                                  # 安装后不自动重启后端
+```
+
 ### 环境要求
 
 - Windows 10 / 11
