@@ -1,7 +1,7 @@
 {
-  "name": "@z-time-007/dsh-personal-assistant",
+  "name": "@local/dsh-personal-assistant",
   "version": "0.1.1",
-  "private": false,
+  "private": true,
   "description": "Least-privilege local personal assistant bundle for DeepSeek Harness",
   "type": "module",
   "main": "./src/dsh-plugin.js",
@@ -27,8 +27,5 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  }
+  "license": "UNLICENSED"
 }

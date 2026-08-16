@@ -1,7 +1,7 @@
 {
-  "name": "@z-time-007/dsh-safe-auto-approval",
+  "name": "@local/dsh-safe-auto-approval",
   "version": "0.1.1",
-  "private": false,
+  "private": true,
   "description": "Fail-closed, allowlist-only automatic approval for bounded low-risk DeepSeek Harness work tools.",
   "type": "module",
   "main": "./src/dsh-plugin.js",
@@ -31,8 +31,5 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  }
+  "license": "UNLICENSED"
 }
