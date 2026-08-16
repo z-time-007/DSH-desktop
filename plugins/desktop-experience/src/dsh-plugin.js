@@ -22,9 +22,19 @@ function exact(ctx, routePath, handler, label) {
 export async function apply(ctx, rawConfig = {}) {
   if (rawConfig.enabled === false) return
   const harnessRoot = resolveHarnessRoot(rawConfig)
-  const imageProcessor = typeof rawConfig.imageProcessor === 'function'
-    ? rawConfig.imageProcessor
-    : createRequire(path.join(harnessRoot, 'package.json'))('sharp')
+  // Resolve sharp from the harness root when available, but NEVER let a missing
+  // image library crash the whole plugin tree (that would stop the DSH app from
+  // starting on machines without sharp installed).
+  let imageProcessor = null
+  if (typeof rawConfig.imageProcessor === 'function') {
+    imageProcessor = rawConfig.imageProcessor
+  } else {
+    try {
+      imageProcessor = createRequire(path.join(harnessRoot, 'package.json'))('sharp')
+    } catch {
+      imageProcessor = null
+    }
+  }
   const stateRoot = path.join(harnessRoot, 'workspace', '.assistant', 'desktop-experience')
   const inboxRoot = path.join(harnessRoot, 'workspace', 'assets', 'wallpapers', 'inbox')
   const assetsRoot = path.join(stateRoot, 'assets')

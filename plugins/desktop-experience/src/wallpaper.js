@@ -56,11 +56,12 @@ async function hashFile(filePath) {
 
 export class WallpaperManager {
   constructor({ inboxRoot, assetsRoot, configStore, imageProcessor }) {
-    if (typeof imageProcessor !== 'function') throw new Error('壁纸处理器不可用。')
+    // sharp may be absent on machines without it installed — never throw here,
+    // otherwise the whole plugin tree (and the DSH app) fails to start.
     this.inboxRoot = inboxRoot
     this.assetsRoot = assetsRoot
     this.configStore = configStore
-    this.sharp = imageProcessor
+    this.sharp = typeof imageProcessor === 'function' ? imageProcessor : null
   }
 
   async initialize() {
@@ -80,6 +81,7 @@ export class WallpaperManager {
 
   async import(fileName) {
     await this.initialize()
+    if (!this.sharp) throw new Error('壁纸处理组件（sharp）未安装，壁纸功能不可用；其它功能不受影响。')
     const safeName = validateInboxName(fileName)
     const inputPath = path.join(this.inboxRoot, safeName)
     await assertRegularFile(inputPath, this.inboxRoot)
