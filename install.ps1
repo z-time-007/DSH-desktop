@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
   DSH 桌面增强套件 · 一键安装脚本（Windows）
 
@@ -147,6 +147,12 @@ if ($health) { Ok '后端已就绪 http://127.0.0.1:3080' } else { Warn '后端�
 Step "安装增强插件"
 $distRoot = Join-Path $harness 'plugins\dist'
 New-Item -ItemType Directory -Force -Path $distRoot | Out-Null
+
+# 壁纸功能可选依赖 sharp：缺失不影响安装，仅提示（避免小白误以为装坏了）
+if (-not (Test-Path (Join-Path $harness 'node_modules\sharp'))) {
+    Warn "未检测到 sharp（壁纸图像库）：壁纸功能不可用，但桌宠 / dock / 透明度等其它功能正常。"
+    Write-Host "  如需壁纸功能，可在 DSH 根目录执行：pnpm add sharp"
+}
 
 $pluginDirs = @(Get-ChildItem (Join-Path $RepoRoot 'plugins') -Directory | Sort-Object Name)
 if ($pluginDirs.Count -eq 0) {
