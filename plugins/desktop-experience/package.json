@@ -1,7 +1,7 @@
 {
-  "name": "@local/dsh-desktop-experience",
+  "name": "@z-time-007/dsh-desktop-experience",
   "version": "0.1.26",
-  "private": true,
+  "private": false,
   "description": "Desktop-focused UI, black-whale pet, local plugin settings, and sanitized static or animated wallpapers for DeepSeek Harness.",
   "type": "module",
   "main": "./src/dsh-plugin.js",
@@ -35,5 +35,8 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "license": "UNLICENSED"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

@@ -7,7 +7,7 @@
 
 - insert:
     - id: local-personal-assistant
-      name: '@local/dsh-personal-assistant'
+      name: '@z-time-007/dsh-personal-assistant'
       config:
         enabled: true
         auditPath: '.assistant/audit/events.jsonl'

@@ -1,0 +1,31 @@
+{
+  "name": "@z-time-007/dsh-desktop",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness desktop enhancement suite — wallpaper & black-whale pet, live balance/token meter, desktop app shell, and Office document tools — installable as ONE plugin via `dsh plugin add`.",
+  "type": "module",
+  "dependencies": {
+    "@z-time-007/dsh-desktop-experience": "^0.1.26",
+    "@z-time-007/dsh-desktop-app": "^0.1.0",
+    "@z-time-007/dsh-office-docs": "^0.1.0",
+    "@z-time-007/dsh-token-pet": "^0.1.1",
+    "@z-time-007/dsh-personal-assistant": "^0.1.1",
+    "@z-time-007/dsh-safe-auto-approval": "^0.1.1"
+  },
+  "files": [
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT"
+}

@@ -1,7 +1,7 @@
 # Local desktop experience for DeepSeek Harness 0.1.0-rc.6.
 - insert:
     - id: desktop-experience
-      name: '@local/dsh-desktop-experience'
+      name: '@z-time-007/dsh-desktop-experience'
       config:
         enabled: true
 
