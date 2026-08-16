@@ -512,7 +512,7 @@ html.dxe-native-pet-mode .dxe-pet{left:50%!important;right:auto!important;top:50
         h("h4", null, "插件状态"),
         h(StatusRow, { name: "Desktop App", detail: window.dshDesktop ? "原生桌面应用" : "桌面启动能力", ok: status.desktop }),
         h(StatusRow, { name: "Token Pet", detail: "余额与 token 数据源", ok: status.token }),
-        h(StatusRow, { name: "Desktop Experience", detail: "v0.1.24 · 布局、桌宠与壁纸", ok: status.experience }));
+        h(StatusRow, { name: "Desktop Experience", detail: "v0.1.25 · 布局、桌宠与壁纸", ok: status.experience }));
       const layoutCard = h("section", { className: "dxe-card" },
         h("h4", null, "桌面布局"),
         h("p", null, "保留 DSH 原生三栏结构，只增加轻量快捷栏，升级兼容性更好。"),
@@ -531,7 +531,7 @@ html.dxe-native-pet-mode .dxe-pet{left:50%!important;right:auto!important;top:50
           h("span", { title: fileName }, fileName),
           h("button", { type: "button", className: "dxe-btn", disabled: Boolean(busy), onClick: () => importWallpaper(fileName) }, busy === fileName ? "扫描中…" : "安全扫描并更换")));
       const wallpaperCard = h("section", { className: "dxe-card" },
-        h("h4", null, "安全更换壁纸 · 插件 v0.1.24"),
+        h("h4", null, "安全更换壁纸 · 插件 v0.1.25"),
         h("p", null, "支持 PNG、JPEG、WebP、GIF；动态图片会转成干净的 animated WebP，并为减少动画模式生成静态封面。SVG、网页、远程 URL 和视频一律拒绝。"),
         h("div", { className: "dxe-actions" },
           h("label", { className: "dxe-upload", title: "从电脑选择本地图片" },
