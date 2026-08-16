@@ -4,7 +4,7 @@
 
 这是一套为 [DeepSeek Harness](https://www.deepseek.com)（本地安装的 DSH，回环端口 `3080`）构建的自用增强插件 + 原生桌面应用，把 DSH 变成一个更像「桌面软件」的工作环境。
 
-仓库只保留**最终版本**的源码，已清除所有个人路径、密钥、对话记录与账户余额信息。
+。
 
 > 本项目为个人学习 / 自用项目，与 DeepSeek 官方无关。
 
@@ -124,6 +124,18 @@ powershell -NoProfile -ExecutionPolicy Bypass -File D:\path\to\dsh-plugins\deskt
    - 关闭：右键鲸鱼 → 「关闭桌宠」。
 6. **顶部快捷栏**：鼠标移到屏幕顶部唤起 dock；「☰」切换侧边栏、「◫」切换详情栏、「▧」开关壁纸。
 7. **托盘**：右键托盘鲸鱼图标可显示 / 隐藏主窗口、开机自启、自动隐藏窗口、重新加载、退出。
+
+---
+
+## 社区与生态
+
+本项目属于 DeepSeek Harness（DSH）社区生态的一部分，可关注以下资源发现更多插件、也让本项目被更多人看到：
+
+- [awesome-deepseek-harness](https://github.com/Dominic789654/awesome-deepseek-harness) —— DSH 生态精选列表（插件 / 技能 / MCP / UI / 工作流）
+- [awesome-dsh-plugin](https://github.com/beancookie/awesome-dsh-plugin) —— DSH 插件精选列表
+- [dsh-plugin-marketplace](https://github.com/YELEBAI/dsh-plugin-marketplace) —— 社区插件市场
+- [WhaleHub 🐋](https://github.com/vvlife/whalehub-dsh) —— DSH 插件市场（发现、搜索、一键安装）
+- 搜索话题：`dsh` · `dsh-plugin` · `deepseek-harness`
 
 ---
 
