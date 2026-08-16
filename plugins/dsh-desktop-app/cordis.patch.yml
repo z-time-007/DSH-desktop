@@ -1,0 +1,11 @@
+# Local desktop-app bundle for DeepSeek Harness 0.1.0-rc.6.
+# This row is inert until the package is installed into a DSH profile
+# (`dsh plugin add`) or loaded from an explicitly reviewed development overlay.
+
+- insert:
+    - id: local-desktop-app
+      name: '@local/dsh-desktop-app'
+      config:
+        enabled: true
+        pwa: true
+        desktopTools: true

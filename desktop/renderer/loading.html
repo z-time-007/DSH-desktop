@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self'"
+    />
+    <title>DeepSeek Harness</title>
+    <link rel="stylesheet" href="loading.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <img class="logo" src="dsh-app-icon-512.png" alt="DeepSeek Harness" draggable="false" />
+      <div class="name">DeepSeek Harness</div>
+      <div class="status" id="status">正在初始化…</div>
+      <div class="dots" id="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+      <button class="retry" id="retry" type="button" hidden>重试</button>
+      <div class="hint" id="hint" hidden></div>
+    </main>
+    <script src="loading.js"></script>
+  </body>
+</html>

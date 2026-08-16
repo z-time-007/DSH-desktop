@@ -1,0 +1,35 @@
+{
+  "name": "@local/dsh-safe-auto-approval",
+  "version": "0.1.1",
+  "private": true,
+  "description": "Fail-closed, allowlist-only automatic approval for bounded low-risk DeepSeek Harness work tools.",
+  "type": "module",
+  "main": "./src/dsh-plugin.js",
+  "exports": {
+    ".": "./src/dsh-plugin.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src/**/*.js",
+    "lib/client.js",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-settings-plugins"
+      ],
+      "platform": "web"
+    }
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "@local/dsh-token-pet",
+  "version": "0.1.1",
+  "private": true,
+  "description": "Token pet data source for DeepSeek Harness: account balance (official DeepSeek user/balance API) plus live per-session token usage, served as JSON for the desktop pet and any dashboard.",
+  "type": "module",
+  "main": "./src/dsh-plugin.js",
+  "exports": {
+    ".": "./src/dsh-plugin.js"
+  },
+  "files": [
+    "src/**/*.js",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "license": "UNLICENSED"
+}

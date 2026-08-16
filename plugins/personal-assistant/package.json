@@ -1,0 +1,31 @@
+{
+  "name": "@local/dsh-personal-assistant",
+  "version": "0.1.1",
+  "private": true,
+  "description": "Least-privilege local personal assistant bundle for DeepSeek Harness",
+  "type": "module",
+  "main": "./src/dsh-plugin.js",
+  "exports": {
+    ".": "./src/dsh-plugin.js",
+    "./core": "./src/core.js"
+  },
+  "files": [
+    "src/**/*.js",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "docx": "9.7.1",
+    "fflate": "0.8.3",
+    "sharp": "0.35.3"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "license": "UNLICENSED"
+}

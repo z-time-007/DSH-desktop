@@ -1,0 +1,16 @@
+# Local development bundle for DeepSeek Harness 0.1.0-rc.6.
+# This row is inert until the package is installed into a DSH profile or loaded
+# from an explicitly reviewed development overlay.
+
+- insert:
+    - id: local-personal-assistant
+      name: '@local/dsh-personal-assistant'
+      config:
+        enabled: !!js process.env.DSH_ASSISTANT_ENABLED !== '0'
+        workspaceRoot: !!js process.env.DSH_ASSISTANT_WORKSPACE
+        auditPath: '.assistant/audit/events.jsonl'
+        computerStatus: true
+        fileSteward: true
+        secretary: true
+        documentWriter: true
+        fileStewardWriteApproval: true

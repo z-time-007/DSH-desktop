@@ -1,0 +1,8 @@
+# Bounded automatic approval for known local work tools.
+- insert:
+    - id: safe-auto-approval
+      name: '@local/dsh-safe-auto-approval'
+      config:
+        enabled: true
+        auditPath: '.assistant/audit/auto-approvals.jsonl'
+

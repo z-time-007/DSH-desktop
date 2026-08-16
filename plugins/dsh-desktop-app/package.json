@@ -1,0 +1,26 @@
+{
+  "name": "@local/dsh-desktop-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Desktop-app mode for DeepSeek Harness: PWA installability (manifest, service worker, icons) plus desktop-integration agent tools (logon autostart task, desktop shortcut, address-bar-free app window).",
+  "type": "module",
+  "main": "./src/dsh-plugin.js",
+  "exports": {
+    ".": "./src/dsh-plugin.js"
+  },
+  "files": [
+    "src/**/*.js",
+    "assets/**/*.png",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "license": "UNLICENSED"
+}

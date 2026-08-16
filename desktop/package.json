@@ -1,0 +1,21 @@
+{
+  "name": "dsh-desktop",
+  "productName": "DeepSeek Harness",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Native desktop application for DeepSeek Harness: a frameless Electron window hosting the local DSH web UI, with tray, autostart, backend bootstrap and a window.dshDesktop bridge for desktop-side settings persistence.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "powershell -NoProfile -ExecutionPolicy Bypass -File build/Build-DshDesktopApp.ps1"
+  },
+  "devDependencies": {
+    "electron": "^36.9.5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron"
+    ]
+  },
+  "license": "UNLICENSED"
+}

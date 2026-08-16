@@ -1,0 +1,19 @@
+# Dependencies / build artifacts
+node_modules/
+dist/
+dist-*/
+*.tgz
+
+# Logs & runtime state
+*.log
+logs/
+*.tmp
+
+# Local tooling caches
+.pnpm-store/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

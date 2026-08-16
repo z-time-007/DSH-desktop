@@ -1,0 +1,17 @@
+# Local office-docs bundle for DeepSeek Harness 0.1.0-rc.6.
+# This row is inert until the package is installed into a DSH profile
+# (`dsh plugin add`) or loaded from an explicitly reviewed development overlay.
+#
+# workspaceRoot: optional absolute path of the fixed workspace. When omitted,
+# the plugin uses $env:DSH_OFFICE_WORKSPACE, then the harness `workspace` dir
+# next to DSH_HOME.
+
+- insert:
+    - id: office-docs
+      name: '@local/dsh-office-docs'
+      config:
+        enabled: true
+        read: true
+        write: true
+        uploads: true
+        maxUploadBytes: 26214400

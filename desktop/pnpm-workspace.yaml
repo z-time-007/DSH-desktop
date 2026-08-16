@@ -1,0 +1,5 @@
+# Local pnpm workspace settings for dsh-desktop.
+# Approves the electron postinstall (binary download/extract) which pnpm 11
+# blocks by default.
+allowBuilds:
+  electron: true
