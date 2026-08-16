@@ -1,7 +1,7 @@
 {
-  "name": "@z-time-007/dsh-office-docs",
+  "name": "@local/dsh-office-docs",
   "version": "0.1.0",
-  "private": false,
+  "private": true,
   "description": "Document processing plugin for DeepSeek Harness: read and create DOCX / PPTX / XLSX (and plain text) inside the fixed workspace, plus a chat-composer upload button. Zero runtime dependencies.",
   "type": "module",
   "main": "./src/dsh-plugin.js",
@@ -31,8 +31,5 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  }
+  "license": "UNLICENSED"
 }

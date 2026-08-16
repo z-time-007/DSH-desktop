@@ -4,7 +4,7 @@
 
 - insert:
     - id: local-desktop-app
-      name: '@z-time-007/dsh-desktop-app'
+      name: '@local/dsh-desktop-app'
       config:
         enabled: true
         pwa: true

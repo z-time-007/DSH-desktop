@@ -8,7 +8,7 @@
 
 - insert:
     - id: office-docs
-      name: '@z-time-007/dsh-office-docs'
+      name: '@local/dsh-office-docs'
       config:
         enabled: true
         read: true

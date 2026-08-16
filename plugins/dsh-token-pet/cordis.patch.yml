@@ -4,7 +4,7 @@
 
 - insert:
     - id: token-pet
-      name: '@z-time-007/dsh-token-pet'
+      name: '@local/dsh-token-pet'
       config:
         enabled: true
         balance: true

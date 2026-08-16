@@ -1,7 +1,7 @@
 {
-  "name": "@z-time-007/dsh-token-pet",
+  "name": "@local/dsh-token-pet",
   "version": "0.1.1",
-  "private": false,
+  "private": true,
   "description": "Token pet data source for DeepSeek Harness: account balance (official DeepSeek user/balance API) plus live per-session token usage, served as JSON for the desktop pet and any dashboard.",
   "type": "module",
   "main": "./src/dsh-plugin.js",
@@ -21,8 +21,5 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  }
+  "license": "UNLICENSED"
 }
