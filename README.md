@@ -90,6 +90,7 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 
 ```powershell
 .\install.ps1 -HarnessRoot "D:\path\to\deepseek-harness"   # 手动指定 DSH 根目录
+.\install.ps1 -Port 3090                                    # 换端口（默认 3080，端口被占用时用）
 .\install.ps1 -SkipDesktopApp                               # 跳过桌面应用构建
 .\install.ps1 -SkipRestart                                  # 安装后不自动重启后端
 ```

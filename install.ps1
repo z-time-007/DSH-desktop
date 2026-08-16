@@ -24,9 +24,13 @@
 param(
     [string]$HarnessRoot = '',
     [string]$DshInstallDir = '',
+    [int]$Port = 3080,
     [switch]$SkipDesktopApp,
     [switch]$SkipRestart
 )
+
+# 让桌面应用跟随同一端口
+$env:DSH_DESKTOP_PORT = [string]$Port
 
 # 避免 pwsh 7 把原生命令的 stderr 当成错误抛出
 $PSNativeCommandUseErrorActionPreference = $false
@@ -127,21 +131,21 @@ $pnpmCmd = if (Test-Path (Join-Path $harness 'runtime\pnpm.cmd')) { Join-Path $h
 # 启动后端（如未运行）
 Step "启动 DeepSeek Harness 后端"
 $health = $false
-try { $r = Invoke-WebRequest -Uri 'http://127.0.0.1:3080/' -UseBasicParsing -TimeoutSec 3; if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 500) { $health = $true } } catch {}
+try { $r = Invoke-WebRequest -Uri "http://127.0.0.1:$Port/" -UseBasicParsing -TimeoutSec 3; if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 500) { $health = $true } } catch {}
 if (-not $health) {
     $starter = Join-Path $harness 'scripts\Start-DeepSeek-HarnessBackground.ps1'
     if (Test-Path $starter) {
-        Start-Process powershell.exe -WindowStyle Hidden -ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-File', $starter, '-Port', '3080') | Out-Null
+        Start-Process powershell.exe -WindowStyle Hidden -ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-File', $starter, '-Port', "$Port") | Out-Null
         Write-Host "后端正在启动，等待就绪……"
         for ($i = 0; $i -lt 60; $i++) {
             Start-Sleep -Seconds 2
-            try { $r = Invoke-WebRequest -Uri 'http://127.0.0.1:3080/' -UseBasicParsing -TimeoutSec 3; if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 500) { $health = $true; break } } catch {}
+            try { $r = Invoke-WebRequest -Uri "http://127.0.0.1:$Port/" -UseBasicParsing -TimeoutSec 3; if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 500) { $health = $true; break } } catch {}
         }
     } else {
         Write-Host "未找到后台启动脚本，请手动启动 DSH 后重试。"
     }
 }
-if ($health) { Ok '后端已就绪 http://127.0.0.1:3080' } else { Warn '后端尚未就绪（可稍后手动启动）' }
+if ($health) { Ok "后端已就绪 http://127.0.0.1:$Port" } else { Warn '后端尚未就绪（可稍后手动启动）' }
 
 # ---------- 3. 安装 6 个增强插件 ----------
 Step "安装增强插件"
@@ -226,7 +230,7 @@ if (-not $SkipRestart) {
         Write-Host "后端正在重启，等待就绪……"
         Start-Sleep -Seconds 12
         for ($i = 0; $i -lt 30; $i++) {
-            try { $r = Invoke-WebRequest -Uri 'http://127.0.0.1:3080/' -UseBasicParsing -TimeoutSec 3; if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 500) { break } } catch {}
+            try { $r = Invoke-WebRequest -Uri "http://127.0.0.1:$Port/" -UseBasicParsing -TimeoutSec 3; if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 500) { break } } catch {}
             Start-Sleep -Seconds 2
         }
     } else {
@@ -237,12 +241,12 @@ if (-not $SkipRestart) {
 # ---------- 6. 验证 ----------
 Step "验证"
 try {
-    $d = (Invoke-WebRequest -Uri 'http://127.0.0.1:3080/dsh-token-pet/data.json' -UseBasicParsing -TimeoutSec 8).Content | ConvertFrom-Json
+    $d = (Invoke-WebRequest -Uri "http://127.0.0.1:$Port/dsh-token-pet/data.json" -UseBasicParsing -TimeoutSec 8).Content | ConvertFrom-Json
     if ($d.session) { Ok "token-pet 数据接口正常（session=$($d.session.sessionId)）" } else { Warn 'token-pet 接口未就绪' }
 } catch { Warn "token-pet 接口未就绪：$($_.Exception.Message)" }
 
 Write-Host "`n========== 安装完成 ==========" -ForegroundColor Green
-Write-Host "1. 打开 DSH：http://127.0.0.1:3080"
+Write-Host "1. 打开 DSH：http://127.0.0.1:$Port"
 Write-Host "2. 桌面应用：$harness 桌面快捷方式或 desktop\dist\DeepSeekHarness\DeepSeekHarness.exe"
 Write-Host "3. 在设置里可看到「桌面体验 / 桌宠 / 壁纸」标签，即插件已生效"
 Write-Host "4. 如遇任何问题，请带上本脚本输出到仓库 Issues 反馈"
