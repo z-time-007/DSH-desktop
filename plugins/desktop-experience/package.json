@@ -1,6 +1,6 @@
 {
   "name": "@local/dsh-desktop-experience",
-  "version": "0.1.25",
+  "version": "0.1.26",
   "private": true,
   "description": "Desktop-focused UI, black-whale pet, local plugin settings, and sanitized static or animated wallpapers for DeepSeek Harness.",
   "type": "module",

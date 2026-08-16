@@ -11,7 +11,14 @@ function resolveHarnessRoot(rawConfig) {
   if (typeof rawConfig.harnessRoot === 'string' && path.isAbsolute(rawConfig.harnessRoot)) {
     return path.resolve(rawConfig.harnessRoot)
   }
-  if (process.env.DSH_HOME) return path.resolve(process.env.DSH_HOME, '..', '..')
+  if (process.env.DSH_HOME) {
+    // 完整版 harness 把 DSH_HOME 放在 <root>/data/dsh-home；而官方 npm 安装直接用 ~/.dsh。
+    // 据此区分，避免在官方版上把数据写到用户主目录。
+    if (path.basename(process.env.DSH_HOME) === 'dsh-home') {
+      return path.resolve(process.env.DSH_HOME, '..', '..')
+    }
+    return path.resolve(process.env.DSH_HOME)
+  }
   return process.cwd()
 }
 
